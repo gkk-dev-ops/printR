@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/public/favicon.ico">
+    <title>PrintR</title>
+</head>
+<body>
+    <h1>PrintR</h1>
+    <form id="uploadForm">
+        <input type="file" id="myFiles" accept="image/*" multiple />
+        <button>Submit</button>
+    </form>
+    <p id="response-info"></p>
+    <p id="response-message"></p>
+</body>
+<script>
+    const form = document.getElementById('uploadForm')
+    const responseInfo = document.getElementById('response-info')
+    const responseMessage = document.getElementById('response-message')
+
+    const sendFiles = async () => {
+        const myFiles = document.getElementById('myFiles').files
+
+        const formData = new FormData()
+
+        Object.keys(myFiles).forEach(key => {
+            formData.append(myFiles.item(key).name, myFiles.item(key))
+        })
+
+        const response = await fetch('http://localhost:3500/upload', {
+            method: 'POST',
+            body: formData
+        })
+
+        const json = await response.json()
+
+        responseInfo.textContent = `Status: ${json?.status}`
+        responseMessage.textContent = json?.message
+
+        console.log(json)
+    }
+
+    // Set sendFiles listener
+    form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        sendFiles()
+    })
+</script>
+</html>
